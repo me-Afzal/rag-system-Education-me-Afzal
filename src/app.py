@@ -1,15 +1,22 @@
 """
 Main Streamlit application
 """
+import sys
+import os
 import streamlit as st
 import time
 from typing import Optional
 
+# Add project root to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+sys.path.append(project_root)
+
 # Import custom modules
-from embeddings import EmbeddingManager
-from vector_store import VectorStoreManager
-from llm_integration import LLMManager, load_api_key
-from retrieval_chain import RetrievalChainManager
+from src.embeddings import EmbeddingManager
+from src.vector_store import VectorStoreManager
+from src.llm_integration import LLMManager, load_api_key
+from src.retrieval_chain import RetrievalChainManager
 
 
 # Page Configuration

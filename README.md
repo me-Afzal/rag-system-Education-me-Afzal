@@ -3,7 +3,6 @@
 An AI-powered document question-answering system that enables users to interact with their documents through natural language queries. Built with Streamlit, LangChain, and Google's Gemini AI.
 
 ![DocQuery Interface](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)
 
 ## Features
