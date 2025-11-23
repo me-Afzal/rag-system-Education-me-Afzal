@@ -2,8 +2,10 @@
 
 An AI-powered document question-answering system that enables users to interact with their documents through natural language queries. Built with Streamlit, LangChain, and Google's Gemini AI.
 
-![DocQuery Interface](https://img.shields.io/badge/Python-3.8+-blue.svg)
+![DocQuery Interface](https://img.shields.io/badge/Python-3.11+-blue.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)
+
+# App Link: [DocQuery](https://rag-system-education-me-afzal.streamlit.app/)
 
 ## Features
 
@@ -78,14 +80,17 @@ Get your API key from [Google AI Studio](https://makersuite.google.com/app/apike
 Create a `requirements.txt` file with:
 
 ```
-streamlit>=1.28.0
-langchain>=0.1.0
-langchain-google-genai>=0.0.6
-langchain-community>=0.0.13
-faiss-cpu>=1.7.4
-sentence-transformers>=2.2.2
-pdfplumber>=0.10.0
-python-docx>=1.0.0
+streamlit==1.40.2
+langchain==0.3.26
+langchain-google-genai==2.0.9
+langchain-community==0.3.27
+langchain-core==0.3.80
+langchain-text-splitters==0.3.8
+pdfplumber==0.10.3
+python-docx==1.1.0
+faiss-cpu==1.9.0.post1
+sentence-transformers==2.3.1
+pypdfium2==5.1.0
 ```
 
 ## Usage
@@ -134,8 +139,6 @@ Below is the system architecture diagram for the RAG-based document research ass
 
 | Metric | Description | Target | Result |
 |--------|-------------|--------|--------|
-| **Precision@K** | Accuracy of top-K retrieved chunks | >0.80 | 0.85 |
-| **Recall@K** | Coverage of relevant chunks | >0.75 | 0.78 |
 | **Response Time** | Average query processing time | <3s | 2.1s |
 
 
@@ -143,7 +146,6 @@ Below is the system architecture diagram for the RAG-based document research ass
 
 | Metric | Description | Score |
 |--------|-------------|-------|
-| **BERTScore** | Semantic similarity | 0.82 |
 | **Faithfulness** | Answer grounded in context | 0.88 |
 
 #### 3. **System Performance**
@@ -265,7 +267,7 @@ Contributions are welcome! Please follow these steps:
 
 ## Contact
 
-Project Maintainer - [@yourusername](https://github.com/me-Afzal)
+Project Maintainer - [@me-Afzal](https://github.com/me-Afzal)
 
 Project Link: [DocQuery](https://github.com/me-Afzal/rag-system-Education-me-Afzal)
 
