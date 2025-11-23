@@ -9,54 +9,158 @@ from typing import Tuple
 import streamlit as st
 
 
-def extract_text_from_pdf(file) -> str:
-    """Extract text from PDF using pdfplumber"""
+def extract_text_from_pdf_with_ocr(file) -> str:
+    """Extract text from PDF with OCR support for scanned documents"""
+    text = ""
+    tmp_file_path = None
+    
     try:
+        file.seek(0)
+        
+        # Create temporary file
         with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_file:
             tmp_file.write(file.read())
             tmp_file_path = tmp_file.name
         
-        text = ""
+        # Try regular text extraction first
         with pdfplumber.open(tmp_file_path) as pdf:
-            for page in pdf.pages:
+            total_pages = len(pdf.pages)
+            st.info(f"Processing {total_pages} pages...")
+            
+            for page_num, page in enumerate(pdf.pages, 1):
+                # Try extracting text normally
                 page_text = page.extract_text()
-                if page_text:
+                
+                # If we got enough text, use it
+                if page_text and len(page_text.strip()) > 100:
                     text += page_text + "\n"
+                    st.write(f"✓ Page {page_num}/{total_pages}: Text-based extraction")
+                else:
+                    # Use OCR for image-based pages
+                    st.warning(f"⚠ Page {page_num}/{total_pages}: Using OCR (scanned image)")
+                    ocr_text = extract_with_ocr(tmp_file_path, page_num)
+                    text += ocr_text + "\n"
         
-        os.unlink(tmp_file_path)
-        return text
+        # Cleanup
+        if tmp_file_path and os.path.exists(tmp_file_path):
+            os.unlink(tmp_file_path)
+        
+        final_text = text.strip()
+        st.success(f"Total extracted: {len(final_text)} characters")
+        
+        return final_text
+    
     except Exception as e:
-        st.error(f"Error extracting PDF '{file.name}': {str(e)}")
+        st.error(f"Error processing PDF: {str(e)}")
+        import traceback
+        st.code(traceback.format_exc())
+        
+        # Cleanup on error
+        if tmp_file_path and os.path.exists(tmp_file_path):
+            try:
+                os.unlink(tmp_file_path)
+            except:
+                pass
+        
         return ""
+
+
+def extract_with_ocr(pdf_path: str, page_num: int) -> str:
+    """Extract text using EasyOCR"""
+    try:
+        import easyocr
+        import fitz  # PyMuPDF
+        import numpy as np
+        from PIL import Image
+        
+        # Initialize reader once (cached in session)
+        if 'ocr_reader' not in st.session_state:
+            st.info("🔄 Loading OCR model (first time only, ~2 minutes)...")
+            st.session_state.ocr_reader = easyocr.Reader(['en'], gpu=False)
+            st.success("OCR model loaded!")
+        
+        reader = st.session_state.ocr_reader
+        
+        # Open PDF and convert page to image
+        doc = fitz.open(pdf_path)
+        page = doc[page_num - 1]
+        
+        # Render at high quality
+        mat = fitz.Matrix(2, 2)  # 2x zoom
+        pix = page.get_pixmap(matrix=mat)
+        
+        # Convert to numpy array for EasyOCR
+        img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+        img_array = np.array(img)
+        
+        # Perform OCR
+        results = reader.readtext(img_array, detail=0, paragraph=True)
+        text = '\n'.join(results)
+        
+        doc.close()
+        
+        st.write(f"  ✓ OCR extracted {len(text)} characters")
+        return text
+    
+    except ImportError as e:
+        st.error(f"Missing library: {e}")
+        st.info("Install: pip install easyocr PyMuPDF")
+        return ""
+    
+    except Exception as e:
+        st.error(f"OCR Error: {str(e)}")
+        import traceback
+        st.code(traceback.format_exc())
+        return ""
+
+def extract_text_from_pdf(file) -> str:
+    """Extract text from PDF (wrapper function)"""
+    return extract_text_from_pdf_with_ocr(file)
 
 
 def extract_text_from_docx(file) -> str:
     """Extract text from DOCX file"""
+    tmp_file_path = None
+    
     try:
+        file.seek(0)
+        
         with tempfile.NamedTemporaryFile(delete=False, suffix='.docx') as tmp_file:
             tmp_file.write(file.read())
             tmp_file_path = tmp_file.name
         
         doc = docx.Document(tmp_file_path)
-        text = "\n".join([paragraph.text for paragraph in doc.paragraphs if paragraph.text.strip()])
+        paragraphs = [p.text for p in doc.paragraphs if p.text.strip()]
+        text = "\n".join(paragraphs)
         
-        os.unlink(tmp_file_path)
+        if tmp_file_path and os.path.exists(tmp_file_path):
+            os.unlink(tmp_file_path)
+        
         return text
+    
     except Exception as e:
-        st.error(f"Error extracting DOCX '{file.name}': {str(e)}")
+        st.error(f"Error extracting DOCX: {str(e)}")
+        
+        if tmp_file_path and os.path.exists(tmp_file_path):
+            try:
+                os.unlink(tmp_file_path)
+            except:
+                pass
+        
         return ""
 
 
 def extract_text_from_txt(file) -> str:
     """Extract text from TXT file"""
     try:
+        file.seek(0)
         return file.read().decode('utf-8')
     except UnicodeDecodeError:
         try:
             file.seek(0)
             return file.read().decode('latin-1')
         except Exception as e:
-            st.error(f"Error extracting TXT '{file.name}': {str(e)}")
+            st.error(f"Error extracting TXT: {str(e)}")
             return ""
 
 
@@ -73,12 +177,22 @@ def extract_text_from_file(file) -> Tuple[str, str]:
     filename = file.name
     file_extension = filename.split('.')[-1].lower()
     
+    st.write(f"📄 Processing: **{filename}**")
+    
+    try:
+        file.seek(0)
+    except:
+        pass
+    
+    text = ""
+    
     if file_extension == 'pdf':
-        return extract_text_from_pdf(file), filename
+        text = extract_text_from_pdf(file)
     elif file_extension == 'docx':
-        return extract_text_from_docx(file), filename
+        text = extract_text_from_docx(file)
     elif file_extension == 'txt':
-        return extract_text_from_txt(file), filename
+        text = extract_text_from_txt(file)
     else:
-        st.warning(f"Unsupported file type: {file_extension}")
-        return "", filename
+        st.warning(f"Unsupported file type: .{file_extension}")
+    
+    return text, filename

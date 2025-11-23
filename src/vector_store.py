@@ -6,6 +6,7 @@ from langchain_community.vectorstores import FAISS
 from langchain.docstore.document import Document
 from typing import List, Tuple, Optional
 import streamlit as st
+from src.document_processor import extract_text_from_file
 
 
 class VectorStoreManager:
@@ -27,7 +28,7 @@ class VectorStoreManager:
             List of chunked documents
         """
         splitter = RecursiveCharacterTextSplitter(
-            separators=["\n\n", "\n", "."],
+            separators=["\n\n", "\n", ". ", " "],
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap
         )
@@ -63,11 +64,12 @@ class VectorStoreManager:
             chunks = self.create_chunks(documents)
             
             if not chunks:
+                st.error("No text chunks created from documents")
                 return None, 0
             
             # Update progress
             if status_text:
-                status_text.text("Creating embeddings...")
+                status_text.text(f"Creating embeddings for {len(chunks)} chunks...")
             if progress_bar:
                 progress_bar.progress(0.6)
             
@@ -90,6 +92,8 @@ class VectorStoreManager:
         
         except Exception as e:
             st.error(f"Error creating vector database: {str(e)}")
+            import traceback
+            st.code(traceback.format_exc())
             return None, 0
     
     def process_files(
@@ -109,8 +113,6 @@ class VectorStoreManager:
         Returns:
             List of Document objects
         """
-        import document_processor
-        
         documents = []
         total_files = len(uploaded_files)
         
@@ -122,13 +124,18 @@ class VectorStoreManager:
             if progress_bar:
                 progress_bar.progress(progress)
             
-            text, filename = document_processor.extract_text_from_file(file)
+            # Use the imported function directly
+            text, filename = extract_text_from_file(file)
             
+            # Debug output
             if text.strip():
+                st.write(f"✓ {filename}: Extracted {len(text)} characters")
                 doc = Document(
                     page_content=text,
                     metadata={"source": filename}
                 )
                 documents.append(doc)
+            else:
+                st.warning(f"{filename}: No text extracted (0 characters)")
         
         return documents
