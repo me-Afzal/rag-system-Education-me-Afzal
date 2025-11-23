@@ -1,16 +1,33 @@
+# Core Framework
 streamlit==1.40.2
+
+# LangChain Ecosystem
 langchain==0.3.26
 langchain-google-genai==2.0.9
 langchain-community==0.3.27
 langchain-core==0.3.80
 langchain-text-splitters==0.3.8
+
+# Document Processing
 pdfplumber==0.10.3
 python-docx==1.1.0
 PyMuPDF==1.24.14
 pypdfium2==5.1.0
+
+# OCR
 easyocr==1.7.1
-opencv-python-headless==4.10.0.84
-faiss-cpu==1.9.0.post1
-sentence-transformers==3.3.1
-torch==2.5.1
-numpy>=2.1.0
+opencv-python-headless==4.8.1.78
+
+# Vector Database & Embeddings
+faiss-cpu==1.7.4
+sentence-transformers==2.3.1
+
+# Deep Learning
+torch==2.4.1
+torchvision==0.19.1
+
+# Core Dependencies
+numpy==1.26.4
+pillow==11.3.0
+scipy==1.16.3
+scikit-learn==1.7.2
