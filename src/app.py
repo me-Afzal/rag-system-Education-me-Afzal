@@ -211,6 +211,21 @@ def render_sidebar(api_key: str):
     """Render sidebar with document management"""
     with st.sidebar:
         st.markdown("## Document Management")
+        
+        # ✅ ADD THIS SECTION - Processing Settings
+        st.markdown("### ⚙️ Processing Settings")
+        max_pages = st.slider(
+            "Max PDF pages to process",
+            min_value=1,
+            max_value=50,
+            value=20,
+            help="Limit pages to avoid memory issues. Recommended: 10-20 pages for Streamlit Cloud"
+        )
+        st.info(f"💡 Will process up to {max_pages} pages per PDF")
+        
+        st.markdown("---")  # Divider
+        
+        # Existing upload section
         st.markdown("### Upload Documents")
         
         uploaded_files = st.file_uploader(
@@ -231,12 +246,12 @@ def render_sidebar(api_key: str):
             
             if not st.session_state.processed:
                 if st.button("Process Documents"):
-                    process_documents(uploaded_files, api_key)
+                    process_documents(uploaded_files, api_key, max_pages)  #ADD max_pages
         
         render_system_status()
 
 
-def process_documents(uploaded_files, api_key: str):
+def process_documents(uploaded_files, api_key: str, max_pages: int = 20):  #ADD max_pages parameter
     """Process uploaded documents"""
     progress_bar = st.progress(0)
     status_text = st.empty()
@@ -244,11 +259,12 @@ def process_documents(uploaded_files, api_key: str):
     # Initialize managers
     vector_manager = VectorStoreManager(st.session_state.embedder)
     
-    # Process files
+    # Process files with max_pages parameter
     documents = vector_manager.process_files(
         uploaded_files, 
         progress_bar, 
-        status_text
+        status_text,
+        max_pages=max_pages  #PASS max_pages to process_files
     )
     
     if documents:

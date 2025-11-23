@@ -100,7 +100,8 @@ class VectorStoreManager:
         self, 
         uploaded_files, 
         progress_bar=None, 
-        status_text=None
+        status_text=None,
+        max_pages: int = 20
     ) -> List[Document]:
         """
         Process uploaded files and create Document objects
@@ -109,6 +110,7 @@ class VectorStoreManager:
             uploaded_files: List of uploaded file objects
             progress_bar: Streamlit progress bar (optional)
             status_text: Streamlit text placeholder (optional)
+            max_pages: Maximum pages to process per PDF (default: 20)
             
         Returns:
             List of Document objects
