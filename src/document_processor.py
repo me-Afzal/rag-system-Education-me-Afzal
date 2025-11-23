@@ -99,7 +99,7 @@ def extract_with_ocr(pdf_path: str, page_num: int) -> str:
         
         doc.close()
         
-        st.write(f"  ✓ OCR extracted {len(text)} characters")
+        st.write(f"OCR extracted {len(text)} characters")
         return text
     
     except ImportError as e:
