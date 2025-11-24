@@ -212,8 +212,8 @@ def render_sidebar(api_key: str):
     with st.sidebar:
         st.markdown("## Document Management")
         
-        # ✅ ADD THIS SECTION - Processing Settings
-        st.markdown("### ⚙️ Processing Settings")
+        #ADD THIS SECTION - Processing Settings
+        st.markdown("### Processing Settings")
         max_pages = st.slider(
             "Max PDF pages to process",
             min_value=1,
@@ -221,7 +221,7 @@ def render_sidebar(api_key: str):
             value=20,
             help="Limit pages to avoid memory issues. Recommended: 10-20 pages for Streamlit Cloud"
         )
-        st.info(f"💡 Will process up to {max_pages} pages per PDF")
+        st.info(f"Will process up to {max_pages} pages per PDF")
         
         st.markdown("---")  # Divider
         

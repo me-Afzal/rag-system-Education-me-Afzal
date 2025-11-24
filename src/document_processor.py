@@ -29,7 +29,7 @@ def extract_text_from_pdf_with_ocr(file, max_pages: int = 20) -> str:
             pages_to_process = min(total_pages, max_pages)
             
             if total_pages > max_pages:
-                st.warning(f"⚠️ PDF has {total_pages} pages. Processing first {max_pages} pages to avoid memory issues.")
+                st.info(f"PDF has {total_pages} pages. Processing first {max_pages} pages to avoid memory issues.")
             else:
                 st.info(f"Processing {pages_to_process} pages...")
             
@@ -40,7 +40,7 @@ def extract_text_from_pdf_with_ocr(file, max_pages: int = 20) -> str:
             for page_num, page in enumerate(pdf.pages[:pages_to_process], 1):
                 try:
                     # Update progress
-                    status_text.text(f"📄 Processing page {page_num}/{pages_to_process}...")
+                    status_text.text(f"Processing page {page_num}/{pages_to_process}...")
                     progress_bar.progress(page_num / pages_to_process)
                     
                     # Try extracting text normally
@@ -49,18 +49,18 @@ def extract_text_from_pdf_with_ocr(file, max_pages: int = 20) -> str:
                     # If we got enough text, use it
                     if page_text and len(page_text.strip()) > 100:
                         text += page_text + "\n"
-                        st.write(f"✓ Page {page_num}/{pages_to_process}: Text-based extraction ({len(page_text)} chars)")
+                        st.write(f"Page {page_num}/{pages_to_process}: Text-based extraction ({len(page_text)} chars)")
                     else:
                         # Use OCR for image-based pages
-                        st.warning(f"⚠ Page {page_num}/{pages_to_process}: Using OCR (scanned image)")
+                        st.info(f"Page {page_num}/{pages_to_process}: Using OCR (scanned image)")
                         
                         try:
                             ocr_text = extract_with_ocr(tmp_file_path, page_num)
                             if ocr_text:
                                 text += ocr_text + "\n"
-                                st.write(f"✓ OCR completed ({len(ocr_text)} chars)")
+                                st.info(f"OCR completed ({len(ocr_text)} chars)")
                             else:
-                                st.warning(f"⚠ Page {page_num}: OCR returned no text")
+                                st.warning(f"Page {page_num}: OCR returned no text")
                         
                         except Exception as ocr_error:
                             st.error(f"Page {page_num} OCR failed: {str(ocr_error)}")
@@ -180,7 +180,7 @@ def extract_with_ocr(pdf_path: str, page_num: int) -> str:
     except Exception as e:
         st.error(f"OCR Error on page {page_num}: {str(e)}")
         
-        with st.expander("🔍 Show OCR error details"):
+        with st.expander("Show OCR error details"):
             import traceback
             st.code(traceback.format_exc())
         

@@ -11,7 +11,7 @@ class RetrievalChainManager:
     def __init__(self, vector_db, llm):
         self.vector_db = vector_db
         self.llm = llm
-        self.k = 4  # Number of documents to retrieve
+        self.k = 6  # Number of documents to retrieve
         
     def create_chain(self) -> RetrievalQAWithSourcesChain:
         """
