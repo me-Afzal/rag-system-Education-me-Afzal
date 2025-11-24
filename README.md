@@ -19,20 +19,10 @@ An AI-powered document question-answering system that enables users to interact 
 - **Dark Theme**: Professional, easy-on-the-eyes interface
 - **Real-time Processing**: Progress indicators for document processing stages
 
-## Demo
+## UI Demo
 
-```
-DocQuery Interface:
-├── Sidebar (Document Management)
-│   ├── File Upload
-│   ├── Selected Files List
-│   ├── Process Documents Button
-│   └── System Status
-└── Main Area (Chat Interface)
-    ├── Question Input
-    ├── Answer Display
-    └── Chat History
-```
+![UI Demo](docs/UI_image.png)
+
 
 ## Installation
 
