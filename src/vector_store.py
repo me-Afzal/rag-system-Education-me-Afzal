@@ -111,7 +111,7 @@ class VectorStoreManager:
             progress_bar: Streamlit progress bar (optional)
             status_text: Streamlit text placeholder (optional)
             max_pages: Maximum pages to process per PDF (default: 20)
-            
+
         Returns:
             List of Document objects
         """
@@ -127,7 +127,7 @@ class VectorStoreManager:
                 progress_bar.progress(progress)
             
             # Use the imported function directly
-            text, filename = extract_text_from_file(file)
+            text, filename = extract_text_from_file(file,max_pages=max_pages)
             
             # Debug output
             if text.strip():
