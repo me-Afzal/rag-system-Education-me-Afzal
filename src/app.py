@@ -219,7 +219,7 @@ def render_sidebar(api_key: str):
             min_value=1,
             max_value=50,
             value=20,
-            help="Limit pages to avoid memory issues. Recommended: 10-20 pages for Streamlit Cloud"
+            help="Recommended: 10-20 pages for Streamlit Cloud"
         )
         st.info(f"Will process up to {max_pages} pages per PDF")
         

@@ -29,7 +29,7 @@ def extract_text_from_pdf_with_ocr(file, max_pages: int = 20) -> str:
             pages_to_process = min(total_pages, max_pages)
             
             if total_pages > max_pages:
-                st.info(f"PDF has {total_pages} pages. Processing first {max_pages} pages to avoid memory issues.")
+                st.info(f"PDF has {total_pages} pages. Processing first {max_pages} pages.")
             else:
                 st.info(f"Processing {pages_to_process} pages...")
             
